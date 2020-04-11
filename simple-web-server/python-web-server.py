@@ -14,6 +14,7 @@ import sys
 import socket
 import threading
 
+
 # A thread class for handling multiple requests at the same time
 class myThread(threading.Thread):
     def __init__(self, conn):
@@ -22,6 +23,7 @@ class myThread(threading.Thread):
 
     def run(self):
         serve(self.conn)
+
 
 # This function runs the main job of serving the required data and sending
 # a proper response. This funciton assembles the other basic funcitons
@@ -33,6 +35,7 @@ def serve(conn):
     if status_code == 404:
         send_response_notfound(conn, status_code)
     conn.close()
+
 
 # Recieves the client request, seperates the parameters supplied and returns
 # them in a dictionary req_headers
@@ -54,6 +57,7 @@ def handle_req(conn):
 
     return req_headers
 
+
 # Gets data from the requested content files. Returns the data, the content
 # type and the status code based on the availability of the file
 def get_data(req_headers):
@@ -73,6 +77,7 @@ def get_data(req_headers):
 
     return [status_code, data, content_type]
                 
+
 # Sends the response to the client with the requested content with status code
 # 200
 def send_response_ok(conn, content_data, status_code, content_type):
@@ -82,6 +87,7 @@ def send_response_ok(conn, content_data, status_code, content_type):
             + "Content-type: {}\r\n".format(content_type)
             + "Connection: close\r\n\r\n")
     conn.send(content_data)
+
 
 # Sends the error message on unavailability of the file
 def send_response_notfound(conn, status_code):
@@ -95,6 +101,9 @@ def send_response_notfound(conn, status_code):
 # port and establishes a tcp connection with the client. On getting a new
 # client, opens a new thread. The server is stopped only on keyboard interrupt.
 if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Usage: {} [port]".format(sys.argv[0]))
+        exit(0)
     port = int(sys.argv[1])
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
